@@ -2,6 +2,7 @@ import os
 
 import dotenv
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from crud.databases import create_tables
 from routes import song
@@ -18,6 +19,15 @@ app.include_router(score.router)
 
 URI = os.getenv("URI")
 
+origins = ['*']
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 async def startup_db():
@@ -32,4 +42,4 @@ async def index():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, port=8091)
+    uvicorn.run(app, host='0.0.0.0', port=25001)

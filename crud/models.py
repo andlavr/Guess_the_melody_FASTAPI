@@ -61,7 +61,7 @@ class Songs(DeclarativeBase):
     style_id = Column(Integer, ForeignKey('styles.id'))
     band_id = Column(Integer, ForeignKey('bands.id'))
 
-    song_name = Column('song_name', String)
+    song_name = Column('song_name', String, unique=True)
     song_text = Column('song_text', String)
     data_ogg = Column('data_ogg', BYTEA)
 

@@ -1,0 +1,1 @@
+docker build -t guess-melody-fastapi .

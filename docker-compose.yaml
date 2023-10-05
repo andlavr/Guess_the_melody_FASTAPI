@@ -1,0 +1,7 @@
+version: '3'
+services:
+  guess-melody-fastapi:
+    image: guess-melody-fastapi
+    restart: always
+    ports:
+      - 25001:25001
