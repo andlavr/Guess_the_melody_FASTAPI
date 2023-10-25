@@ -42,4 +42,6 @@ async def index():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host='localhost', port=25001)
+    env_host = os.getenv("HOST")
+
+    uvicorn.run(app, host=env_host if env_host else "localhost", port=25001)

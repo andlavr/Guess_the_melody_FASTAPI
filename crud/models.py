@@ -14,9 +14,10 @@ class Style(DeclarativeBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
     style = Column('style', String, unique=True)
     description = Column('description', String)
+    image = Column('image', BYTEA)
 
     def __repr__(self):
-        return f"id={self.id}, style={self.style}, description={self.description}"
+        return f"id={self.id}, style={self.style}, description={self.description}, image={self.image}"
 
 
 class Bands(DeclarativeBase):
