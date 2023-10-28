@@ -1,4 +1,4 @@
-docker build -t guess-melody-fastapi .
+docker build -t guess-melody-api .
 
 
 version: '2'
