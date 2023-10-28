@@ -1,5 +1,6 @@
 from typing import Optional
 
+from psycopg2 import Binary
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 

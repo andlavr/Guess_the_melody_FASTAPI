@@ -1,3 +1,4 @@
+import base64
 import os
 
 from fastapi import APIRouter, Depends, UploadFile, File
@@ -26,6 +27,6 @@ async def update_songs_image(style: str, token: str, image: UploadFile = File(..
     if token != os.getenv("TOKEN"):
         return False
 
-    result = await crud_style.PUT.image(style, image.file.read(), session)
+    result = await crud_style.PUT.image(style, base64.b64encode(image.file.read()), session)
     image.file.close()
     return result
