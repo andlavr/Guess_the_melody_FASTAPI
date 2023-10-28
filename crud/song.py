@@ -1,13 +1,11 @@
 import random
 import traceback
-import typing
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from crud import style as crud_style
 from crud.models import Songs, Bands
-
-from crud.style import get_style_id
 
 
 # def add_song(style_id: int, band_id: int, song_name: str, song_text: str) -> None:
@@ -80,7 +78,7 @@ async def get_random_song_by_style(style: str, session: AsyncSession):
     :return:
     """
 
-    my_style_id = await get_style_id(style, session)
+    my_style_id = await crud_style.GET.style_id(style, session)
 
     if not my_style_id:
         return None
@@ -129,7 +127,7 @@ async def get_random_label(session):
             Bands.band_name, Songs.song_name
         ).join(
             Bands
-        ).limit(1).offset(random.randint(0, song_count-1))
+        ).limit(1).offset(random.randint(0, song_count - 1))
     )
 
     result = song.fetchall()

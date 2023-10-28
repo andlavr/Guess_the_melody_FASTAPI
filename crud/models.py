@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, PrimaryKeyConstraint, ForeignKey, BLOB, Float
+from sqlalchemy import Column, Integer, String, PrimaryKeyConstraint, ForeignKey, Float
 from sqlalchemy.dialects.postgresql import BYTEA
 
 from crud.databases import DeclarativeBase
@@ -82,9 +82,5 @@ class Score(DeclarativeBase):
     name = Column('name', String)
     time = Column(Float)
 
-
-
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.songs_id}, name={self.name}, time={self.time})"
-
-

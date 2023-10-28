@@ -4,8 +4,6 @@ from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud.models import Score, Songs, Bands
-from crud.song import get_songs
-
 
 
 async def get_song_score(band, song_name, session: AsyncSession) -> list:
@@ -22,7 +20,7 @@ async def get_song_score(band, song_name, session: AsyncSession) -> list:
                 Songs.id
             ).join(
                 Bands
-            ).filter(Songs.song_name==song_name, Bands.band_name==band)
+            ).filter(Songs.song_name == song_name, Bands.band_name == band)
         )
 
         result = song_id.fetchone()
@@ -78,8 +76,3 @@ async def post_song_score(username, song_name, band, time, session: AsyncSession
     await session.commit()
 
     return result
-
-
-
-
-
