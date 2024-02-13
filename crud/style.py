@@ -1,6 +1,5 @@
 from typing import Optional
 
-from psycopg2 import Binary
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,6 +16,7 @@ class GET:
         :param session: объект типа session
         :return: объект типа id
         """
+
         styles = await session.execute(select(Style.style, Style.description, Style.image))
         data = styles.fetchall()
 
@@ -48,6 +48,7 @@ class PUT:
     """
     Методы добавления объектов (description, image) в БД
     """
+
     @staticmethod
     async def description(style, description, session: AsyncSession) -> bool:
         await session.execute(update(Style).values(description=description).where(Style.style == style))

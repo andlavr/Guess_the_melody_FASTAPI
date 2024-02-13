@@ -1,15 +1,10 @@
-import json
 from typing import Optional
 
 from fastapi import APIRouter, Depends
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import JSONResponse
 
 import crud.score as score
 from crud.databases import get_session
-from crud.models import Songs
-from schemes.song import Song
 
 router = APIRouter()
 

@@ -8,24 +8,6 @@ from crud import style as crud_style
 from crud.models import Songs, Bands
 
 
-# def add_song(style_id: int, band_id: int, song_name: str, song_text: str) -> None:
-#     """
-#     Добавление песен в БД
-#
-#     :param style_id: объект типа int
-#     :param band_id: объект типа int
-#     :param song_name: объект типа str
-#     :param song_text: объект типа str
-#     :return: None
-#     """
-#
-#     new_song = Songs(style_id=style_id, band_id=band_id, song_name=song_name, song_text=song_text)
-#
-#     session.add(new_song)
-#
-#     session.commit()
-
-
 async def get_songs(session: AsyncSession) -> list:
     """
     Получение id всех песен
@@ -50,7 +32,6 @@ async def get_random_songs(session: AsyncSession) -> Songs:
         all_songs = await get_songs(session)
         random_song = random.choice(all_songs)
 
-        # TODO: Подумать над рефактором
         song = await session.execute(
             select(
                 Bands.band_name, Songs.song_name, Songs.song_text, Songs.data_ogg
@@ -95,7 +76,6 @@ async def get_random_song_by_style(style: str, session: AsyncSession):
     if result:
         random_song = random.choice(result)
 
-        # TODO: Подумать над рефактором
         song = await session.execute(
             select(
                 Bands.band_name, Songs.song_name, Songs.song_text, Songs.data_ogg
@@ -115,6 +95,7 @@ async def get_random_song_by_style(style: str, session: AsyncSession):
 async def get_random_label(session):
     """
     Получение названия случайной песен
+
     :param session:
     :return:
     """

@@ -67,7 +67,6 @@ class Songs(DeclarativeBase):
     data_ogg = Column('data_ogg', BYTEA)
 
     def __repr__(self):
-        # return f"style_id={self.style_id}, band_id={self.band_id}, song_name={self.song_name}, song_text={self.song_text}, data_ogg={self.data_ogg}"
         return f"{self.__class__.__name__}(style_id={self.style_id}, band_id={self.band_id}, song_name={self.song_name}, song_text={self.song_text}, data_ogg={self.data_ogg})"
 
 
