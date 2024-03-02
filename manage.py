@@ -8,6 +8,7 @@ from crud.databases import create_tables
 from routes import song
 from routes import score
 from routes import style
+from routes import bands
 
 dotenv.load_dotenv()
 
@@ -16,6 +17,7 @@ app = FastAPI()
 app.include_router(song.router)
 app.include_router(style.router)
 app.include_router(score.router)
+app.include_router(bands.router)
 
 URI = os.getenv("URI")
 

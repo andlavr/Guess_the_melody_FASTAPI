@@ -1,117 +1,139 @@
 import random
 import traceback
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud import style as crud_style
 from crud.models import Songs, Bands
 
 
-async def get_songs(session: AsyncSession) -> list:
-    """
-    Получение id всех песен
+class GET:
 
-    :return:объект типа id
-    """
+    @staticmethod
+    async def random_songs(session: AsyncSession) -> Songs:
+        """
+        Получение всех записей из таблицы Songs
 
-    songs = await session.execute(select(Songs.style_id, Songs.band_id, Songs.song_name))
-    data = songs.fetchall()
-    return data
+        :param session: объект сессии для подключения к БД
 
+        :return: рандомная песня
+        """
 
-async def get_random_songs(session: AsyncSession) -> Songs:
-    """
-    Получение всех записей из таблицы Songs
+        try:
+            songs = await session.execute(select(Songs.style_id, Songs.band_id, Songs.song_name))
+            all_songs = songs.fetchall()
 
-    :param session:
-    :return:
-    """
+            random_song = random.choice(all_songs)
 
-    try:
-        all_songs = await get_songs(session)
-        random_song = random.choice(all_songs)
+            song = await session.execute(
+                select(
+                    Bands.band_name, Songs.song_name, Songs.song_text, Songs.data_ogg
+                ).join(
+                    Bands
+                ).filter(
+                    Songs.style_id == random_song[0], Songs.band_id == random_song[1], Songs.song_name == random_song[2]
+                )
+            )
+
+            result = song.fetchone()
+
+            return result  # Конвертация объектов типа Row в объект SQLAlchemy
+
+        except Exception:
+            traceback.print_exc()
+
+    @staticmethod
+    async def random_song_by_style(style: str, session: AsyncSession):
+        """
+        Получение случайной песни по стилю
+
+        :param style: стиль песни
+        :param session: объект сессии для подключения к БД
+
+        :return: песня
+        """
+
+        my_style_id = await crud_style.GET.style_id(style, session)
+
+        if not my_style_id:
+            return None
 
         song = await session.execute(
             select(
-                Bands.band_name, Songs.song_name, Songs.song_text, Songs.data_ogg
-            ).join(
-                Bands
-            ).filter(
-                Songs.style_id == random_song[0], Songs.band_id == random_song[1], Songs.song_name == random_song[2]
+                Songs.style_id, Songs.band_id, Songs.song_name
+            ).filter_by(
+                style_id=my_style_id
             )
         )
 
-        result = song.fetchone()
+        result = song.fetchall()
+        if result:
+            random_song = random.choice(result)
 
-        return result  # Конвертация объектов типа Row в объект SQLAlchemy
+            song = await session.execute(
+                select(
+                    Bands.band_name, Songs.song_name, Songs.song_text, Songs.data_ogg
+                ).join(
+                    Bands
+                ).filter(
+                    Songs.style_id == random_song[0], Songs.band_id == random_song[1], Songs.song_name == random_song[2]
+                )
+            )
 
-    except Exception:
-        traceback.print_exc()
+            result = song.fetchone()
+            return result
 
-
-async def get_random_song_by_style(style: str, session: AsyncSession):
-    """
-    Получение случайной песни по стилю
-
-    :param style:
-    :param session:
-    :return:
-    """
-
-    my_style_id = await crud_style.GET.style_id(style, session)
-
-    if not my_style_id:
         return None
 
-    song = await session.execute(
-        select(
-            Songs.style_id, Songs.band_id, Songs.song_name
-        ).filter_by(
-            style_id=my_style_id
-        )
-    )
+    @staticmethod
+    async def random_label(session):
+        """
+        Получение названия случайной песен
 
-    result = song.fetchall()
-    if result:
-        random_song = random.choice(result)
+        :param session: объект сессии для подключения к БД
+
+        :return: название песни
+        """
+
+        song_count = await session.execute(func.count(Songs.song_name))
+        song_count = song_count.scalars().one()
 
         song = await session.execute(
             select(
-                Bands.band_name, Songs.song_name, Songs.song_text, Songs.data_ogg
+                Bands.band_name, Songs.song_name
             ).join(
                 Bands
-            ).filter(
-                Songs.style_id == random_song[0], Songs.band_id == random_song[1], Songs.song_name == random_song[2]
-            )
+            ).limit(1).offset(random.randint(0, song_count - 1))
         )
 
-        result = song.fetchone()
+        result = song.fetchall()
+        if result:
+            result = [f"{song[0]} - {song[1]}" for song in result]
         return result
 
-    return None
+class POST:
 
+    @staticmethod
+    async def song(session: AsyncSession, style_id: int, band_id: int, song_name: str, song_text: str, data_ogg: bytes):
+        """
+        Добавление песни в БД
 
-async def get_random_label(session):
-    """
-    Получение названия случайной песен
+        :param session: объект сессии для подключения к БД
+        :param style_id: id стиля
+        :param band_id: id группы
+        :param song_name: название песни
+        :param song_text: слова песни
 
-    :param session:
-    :return:
-    """
+        :return: dict
+        """
 
-    song_count = await session.execute(func.count(Songs.song_name))
-    song_count = song_count.scalars().one()
+        try:
+            await session.execute(insert(Songs).values(style_id=style_id, band_id=band_id, song_name=song_name, song_text=song_text, data_ogg=data_ogg))
+            await session.commit()
 
-    song = await session.execute(
-        select(
-            Bands.band_name, Songs.song_name
-        ).join(
-            Bands
-        ).limit(1).offset(random.randint(0, song_count - 1))
-    )
-
-    result = song.fetchall()
-    if result:
-        result = [f"{song[0]} - {song[1]}" for song in result]
-    return result
+            return {'result': True, "message": "Song added"}
+        except IntegrityError:
+            traceback.print_exc()
+            return {"result": False, "message": "Song already exists"}

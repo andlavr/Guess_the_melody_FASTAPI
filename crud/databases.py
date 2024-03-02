@@ -24,6 +24,11 @@ async_session = sessionmaker(
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    """
+    Создает сессию подключения к БД
+
+    :return: None
+    """
     async_session = sessionmaker(
         engine,
         class_=AsyncSession,  # type: ignore
@@ -36,5 +41,10 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def create_tables():
+    """
+    Создание таблиц на основе моделей
+
+    :return: None
+    """
     async with engine.begin() as conn:
         await conn.run_sync(DeclarativeBase.metadata.create_all)

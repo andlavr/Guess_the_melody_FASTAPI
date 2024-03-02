@@ -1,6 +1,8 @@
+import os
 from typing import Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import select, update, insert
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud.models import Style
@@ -14,7 +16,8 @@ class GET:
         Получение id всех стилей
 
         :param session: объект типа session
-        :return: объект типа id
+
+        :return: id стиля
         """
 
         styles = await session.execute(select(Style.style, Style.description, Style.image))
@@ -30,9 +33,9 @@ class GET:
         """
         Получение id стиля из БД
 
-
-        :param style: объект типа str
+        :param style: название стиля
         :param session: объект сессии session
+
         :return: id стиля или None
         """
 
@@ -42,6 +45,46 @@ class GET:
         if data:
             return data[0]
         return data
+
+    @staticmethod
+    async def style(style_name: str, session: AsyncSession) -> Optional[int]:
+        """
+        Получение id стиля из БД
+
+        :param style: название стиля
+        :param session: объект сессии session
+
+        :return: id стиля или None
+        """
+        try:
+
+            styles = await session.execute(select(Style).filter_by(style=style_name))
+            data = styles.mappings().one()
+
+            if data:
+                return data["Style"]
+            return None
+        except NoResultFound:
+            return None
+
+
+class POST:
+    @staticmethod
+    async def style(session: AsyncSession, style: str, image: bytes = None, description: str = None):
+        """
+        Добавляет стиль в БД
+
+        :param style: название стиля
+        :return: bool
+        """
+
+        try:
+            await session.execute(insert(Style).values(style=style, image=image, description=description))
+            await session.commit()
+
+            return {'result': True, "message": "Style added"}
+        except IntegrityError:
+            return {"result": False, "message": "Style already exists"}
 
 
 class PUT:

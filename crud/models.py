@@ -6,7 +6,7 @@ from crud.databases import DeclarativeBase
 
 class Style(DeclarativeBase):
     """
-    Класс Style для создания объектов типа style и добавления их в БД
+    Класс Style создание объектов типа style и добавление их в БД
     """
 
     __tablename__ = 'styles'
@@ -22,7 +22,7 @@ class Style(DeclarativeBase):
 
 class Bands(DeclarativeBase):
     """
-    Класс Band для создания объектов типа bands и добавления их в БД
+    Класс Band создание объектов типа bands и добавление их в БД
     """
 
     __tablename__ = 'bands'
@@ -36,7 +36,7 @@ class Bands(DeclarativeBase):
 
 class BandsStyles(DeclarativeBase):
     """
-    Класс BandsStyles для создания объектов типа style_id, band_id и добавления их в БД
+    Класс BandsStyles создание объектов типа style_id, band_id и добавление их в БД
     """
 
     __tablename__ = 'band_style'
@@ -53,7 +53,7 @@ class BandsStyles(DeclarativeBase):
 
 class Songs(DeclarativeBase):
     """
-    Класс Song для создания объектов типа song и добавления их в БД
+    Класс Song создание объектов типа song и добавление их в БД
     """
 
     __tablename__ = 'songs'
@@ -72,7 +72,7 @@ class Songs(DeclarativeBase):
 
 class Score(DeclarativeBase):
     """
-    Класс Player для создания объектов типа player и добавления их в БД
+    Класс Player создание объектов типа player и добавление их в БД
     """
     __tablename__ = 'score'
 
